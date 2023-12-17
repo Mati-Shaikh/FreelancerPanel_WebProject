@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const userSchema = mongoose.Schema({
+const CustomerSchema = mongoose.Schema({
     FullName: String,
     Email: String,
     Role: String,
@@ -16,11 +16,25 @@ const userSchema = mongoose.Schema({
         type: Number,
         default: 0
     },
+    //Notifications:[String],
     Notifications: [{
-        message: {
-            type: String,
-            required: true,
-        },
+        message: String,
+        createdAt: {
+            type: Date,
+            default: Date.now
+        }
+    }],
+    TopupHistory: [
+        {
+            amount: Number,
+            timestamp: {
+                type: Date,
+                default: Date.now
+            }
+        }
+    ],
+    PaymentHistory: [{
+        message: String,
         createdAt: {
             type: Date,
             default: Date.now
@@ -28,5 +42,5 @@ const userSchema = mongoose.Schema({
     }],
 }, { timestamps: true });
 
-const model = mongoose.model("Customer", userSchema);
+const model = mongoose.model("Customer", CustomerSchema);
 module.exports = model;

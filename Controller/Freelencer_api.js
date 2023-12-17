@@ -7,6 +7,25 @@ const SellerProject = require('../models/SellerProjects.schema');
 const Customer =  require('../models/Customer.schema');
 const CustomerProject =  require('../models/Projects.schema');
 
+let GetProfile = async (req,res) =>{
+  const userId = res.locals.userId; // Assuming your middleware sets the user ID in req.user
+
+  try {
+    const userProfile = await Freelance.findById(userId);
+
+    if (!userProfile) {
+      return res.status(404).json({ message: 'User profile not found' });
+    }
+
+    res.status(200).json(userProfile);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+
+
 let UpdateFreelancer = async (req, res) => {
   // User ID is available from the middleware
   let id = res.locals.userId;
@@ -44,6 +63,17 @@ let GetAllProjects = async(req,res)=>{
     res.status(500).json(err);
   }
 }
+let GetPresentProposals = async (req, res) => {
+  try {
+    // Retrieve projects with status 'APPROVED'
+    const projects = await Projects.find({ Status: 'APPROVED' });
+
+    res.status(200).json({ projects });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 let GetSellerProjects =async (req,res)=>{
  try{
     const seller= await Seller.find();
@@ -117,7 +147,7 @@ let ProjectApproved = async (req, res) => {
     //   message: `Your Amount of (${project.Title}) has been Deducted from your Freeze Account and has been added to the Freelancer (${res.locals.userFullName}) Account`,
     //   createdAt: new Date(),
     // });
-    await client.save();
+
 
 
     //Notification of Amount in Freelancer
@@ -238,7 +268,7 @@ let ProjectDeliverd = async (req, res) => {
       
       // Notify the client
       const client = await Clients.findById(project.UserId);
-      
+      const freelancer = await Freelance.findById(freelancerId);
       const deductedAmount = project.Budget;
       client.FreezeBalance -= deductedAmount;
 
@@ -263,11 +293,15 @@ let ProjectDeliverd = async (req, res) => {
       message: `Your Amount (${deductedAmount}) of (${project.Title}) has been Deducted from your Freeze Account and has been added to the Freelancer (${res.locals.userFullName}) Account`,
       createdAt: new Date(),
     });
+    client.PaymentHistory.push({
+      message: `Amount (${deductedAmount}) of (${project.Title}) has been Deducted from your Freeze Account and has been added to the Freelancer (${res.locals.userFullName}) Account`,
+      createdAt: new Date(),
+    });
 
       await client.save();
 
       // Notify the freelancer
-      const freelancer = await Freelance.findById(freelancerId);
+      
      
       // Check if Notifications array exists, if not, initialize it
       if (!freelancer.Notifications) {
@@ -278,13 +312,18 @@ let ProjectDeliverd = async (req, res) => {
       freelancer.Notifications.push({
         message: `You have successfully delivered the project (${project.Title}) to the Customer (${project.Username}).`,
         createdAt: new Date(),
-      });
+      }); 
       //Notification of Amount in Freelancer
     freelancer.Notifications.push({
       message: `Your Amount (${deductedAmount}) of (${project.Title}) has been added in your Account from Customer (${project.Username}).`,
       createdAt: new Date(),
     });
 
+
+    freelancer.PaymentHistory.push({
+      message: `Amount (${deductedAmount}) of (${project.Title}) has been added in your Account from Customer (${project.Username}).`,
+      createdAt: new Date(),
+    });
 
       await freelancer.save();
 
@@ -363,8 +402,46 @@ let SearchSeller = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
+let GetNewProposal = async (req, res) => {
+  try {
+    // Fetch projects where the current user is assigned and the status is not APPROVED or DELIVERED
+    const projects = await Projects.find({
+      Assigned: res.locals.userId,
+      Status: { $nin: ['REJECTED', 'DELIVERED','APPROVED'] },
+    });
 
-module.exports = SearchSeller;
+    if (projects.length > 0) {
+      res.status(200).json({ projects });
+    } else {
+      res.status(404).json({ message: 'No new proposals found for the current user.' });
+    }
+  } catch (error) {
+    console.error('Error during fetching new proposals:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+let getPaymentHistory = async (req, res) => {
+  try {
+    // Get the freelanceId from res.locals.userId
+    let freelanceId = res.locals.userId;
 
+    // Find the Freelance document by ID
+    const freelance = await Freelance.findById(freelanceId);
 
-module.exports = {SearchSeller,GetSellerProjects,AddsampleProject,GetReviews ,ProjectDeliverd,Notifications,ProjectApproved,ProjectRejected, UpdateFreelancer,DeleteFreelancer, GetAllProjects};
+    // Check if the Freelance document is found
+    if (!freelance) {
+      return res.status(404).json({ message: 'Freelancer not found' });
+    }
+
+    // Get the PaymentHistory array from the Freelance document
+    const paymentHistory = freelance.PaymentHistory;
+
+    // Respond with the PaymentHistory array
+    res.status(200).json({ paymentHistory });
+  } catch (err) {
+    console.error('Error during fetching payment history:', err);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+module.exports = {getPaymentHistory,GetNewProposal,GetPresentProposals,SearchSeller,GetSellerProjects,AddsampleProject,GetReviews ,ProjectDeliverd,Notifications,ProjectApproved,ProjectRejected, UpdateFreelancer,DeleteFreelancer, GetAllProjects,GetProfile};

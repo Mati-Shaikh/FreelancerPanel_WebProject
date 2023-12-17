@@ -69,6 +69,13 @@ const userSchema = mongoose.Schema({
     type: Number,
     default: 0, // Default value for RivisionCost
   },
+  PaymentHistory: [{
+    message: String,
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
+}],
   Samples: [sampleprojects],
 }, { timestamps: true });
 

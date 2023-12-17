@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const verifyToken = require("./authentication");
 
-const {AddsampleProject,GetReviews,Notifications,UpdateFreelancer, DeleteFreelancer, GetAllProjects, ProjectApproved, ProjectRejected, ProjectDeliverd, GetSellerProjects, SearchSeller} = require('../Controller/Freelencer_api');
+const {getPaymentHistory,GetNewProposal,GetPresentProposals,AddsampleProject,GetReviews,Notifications,UpdateFreelancer, DeleteFreelancer, GetAllProjects, ProjectApproved, ProjectRejected, ProjectDeliverd, GetSellerProjects, SearchSeller, GetProfile} = require('../Controller/Freelencer_api');
 const {sendMessage} = require('../Controller/Chat');
 
 router.put('/updateFreelancer',verifyToken,UpdateFreelancer);
@@ -15,6 +15,10 @@ router.get('/getreviews',verifyToken,GetReviews);
 router.post('/addSampleProject',verifyToken,AddsampleProject);
 router.get('/getsellerprojects',verifyToken,GetSellerProjects);
 router.get('/searchSeller',verifyToken,SearchSeller);
+router.get('/getProfile',verifyToken,GetProfile);
+router.get('/getPresentProposals',verifyToken,GetPresentProposals);
+router.get('/getnewProposal',verifyToken,GetNewProposal);
+router.get('/getPaymentHistory',verifyToken,getPaymentHistory);
 
 
 router.post('/sendmessage/:receiverId',verifyToken, sendMessage);
