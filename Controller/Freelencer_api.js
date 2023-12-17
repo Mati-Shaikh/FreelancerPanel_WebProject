@@ -103,22 +103,35 @@ let ProjectApproved = async (req, res) => {
     });
 
     // Deduct the project's budget from the customer's FreezeBalance
-    const deductedAmount = project.Budget;
-    client.FreezeBalance -= deductedAmount;
+    // const deductedAmount = project.Budget;
+    // client.FreezeBalance -= deductedAmount;
     //client.AccountBalance -= deductedAmount; // Deduct from AccountBalance as well
-    await client.save();
+    
 
     // Add the project's budget to the freelancer's AccountBalance
-    if (!isNaN(deductedAmount)) {
-      freelancer.AccountBalance = isNaN(freelancer.AccountBalance) ? deductedAmount : freelancer.AccountBalance + deductedAmount;
-    }
+    // if (!isNaN(deductedAmount)) {
+    //   freelancer.AccountBalance = isNaN(freelancer.AccountBalance) ? deductedAmount : freelancer.AccountBalance + deductedAmount;
+    // }
+    //Notication from the Client Side
+    // client.Notifications.push({
+    //   message: `Your Amount of (${project.Title}) has been Deducted from your Freeze Account and has been added to the Freelancer (${res.locals.userFullName}) Account`,
+    //   createdAt: new Date(),
+    // });
+    await client.save();
+
+
+    //Notification of Amount in Freelancer
+    // freelancer.Notifications.push({
+    //   message: `Your Amount of (${project.Title}) has been added in your Account from Customer (${project.Username}).`,
+    //   createdAt: new Date(),
+    // });
 
     await freelancer.save();
 
     res.status(200).json({
       message: 'Project approved successfully',
-      deductionMessage: `Amount (${deductedAmount}) deducted from the Client's Account.`,
-      additionMessage: `Amount (${deductedAmount}) added to the Freelancer's Account.`,
+      // deductionMessage: `Amount (${deductedAmount}) deducted from the Client's Account.`,
+      // additionMessage: `Amount (${deductedAmount}) added to the Freelancer's Account.`,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -222,10 +235,18 @@ let ProjectDeliverd = async (req, res) => {
 
       // Save the updated project
       await project.save();
-
+      
       // Notify the client
       const client = await Clients.findById(project.UserId);
       
+      const deductedAmount = project.Budget;
+      client.FreezeBalance -= deductedAmount;
+
+      //Adding Amount into the Freelancer Account
+      if (!isNaN(deductedAmount)) {
+        freelancer.AccountBalance = isNaN(freelancer.AccountBalance) ? deductedAmount : freelancer.AccountBalance + deductedAmount;
+      }
+
       // Check if Notifications array exists, if not, initialize it
       if (!client.Notifications) {
         client.Notifications = [];
@@ -237,11 +258,17 @@ let ProjectDeliverd = async (req, res) => {
         createdAt: new Date(),
       });
 
+      //Notication from the Client Side
+    client.Notifications.push({
+      message: `Your Amount (${deductedAmount}) of (${project.Title}) has been Deducted from your Freeze Account and has been added to the Freelancer (${res.locals.userFullName}) Account`,
+      createdAt: new Date(),
+    });
+
       await client.save();
 
       // Notify the freelancer
       const freelancer = await Freelance.findById(freelancerId);
-
+     
       // Check if Notifications array exists, if not, initialize it
       if (!freelancer.Notifications) {
         freelancer.Notifications = [];
@@ -252,6 +279,12 @@ let ProjectDeliverd = async (req, res) => {
         message: `You have successfully delivered the project (${project.Title}) to the Customer (${project.Username}).`,
         createdAt: new Date(),
       });
+      //Notification of Amount in Freelancer
+    freelancer.Notifications.push({
+      message: `Your Amount (${deductedAmount}) of (${project.Title}) has been added in your Account from Customer (${project.Username}).`,
+      createdAt: new Date(),
+    });
+
 
       await freelancer.save();
 
