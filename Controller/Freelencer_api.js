@@ -55,24 +55,38 @@ let DeleteFreelancer =  async(req ,res)=>{
       res.status(404).json({"Message":"Error" , err:err})
     }
 }
-let GetAllProjects = async(req,res)=>{
-  try{
-    const projects= await Projects.find();
-    res.status(200).json(projects);
-  } catch (err) {
-    res.status(500).json(err);
-  }
-}
-let GetPresentProposals = async (req, res) => {
+const GetAllProjects = async (req, res) => {
   try {
-    // Retrieve projects with status 'APPROVED'
-    const projects = await Projects.find({ Status: 'APPROVED' });
+    // Retrieve all projects
+    const projects = await Projects.find();
 
-    res.status(200).json({ projects });
+    // Sort projects by date (createdAt) in descending order
+    const sortedProjects = projects.sort((a, b) => {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+
+    res.status(200).json(sortedProjects);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
+const GetPresentProposals = async (req, res) => {
+  try {
+    // Retrieve projects with status 'APPROVED'
+    const projects = await Projects.find({ Status: 'APPROVED' });
+
+    // Sort projects by date (createdAt) in descending order
+    const sortedProjects = projects.sort((a, b) => {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+
+    res.status(200).json({ projects: sortedProjects });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 
 let GetSellerProjects =async (req,res)=>{
  try{
@@ -90,11 +104,6 @@ let ProjectApproved = async (req, res) => {
     if (!project) {
       return res.status(404).json({ message: 'Project not found' });
     }
-
-    // Check if the project is not already approved
-    // if (project.Status !== 'WAITING FOR APPROVAL') {
-    //   return res.status(400).json({ message: 'Project has already been approved or rejected' });
-    // }
 
     // Update the status to 'APPROVED'
     project.Status = 'APPROVED';
@@ -131,30 +140,6 @@ let ProjectApproved = async (req, res) => {
       message: `You approved the project (${project.Title}).`,
       createdAt: new Date(),
     });
-
-    // Deduct the project's budget from the customer's FreezeBalance
-    // const deductedAmount = project.Budget;
-    // client.FreezeBalance -= deductedAmount;
-    //client.AccountBalance -= deductedAmount; // Deduct from AccountBalance as well
-    
-
-    // Add the project's budget to the freelancer's AccountBalance
-    // if (!isNaN(deductedAmount)) {
-    //   freelancer.AccountBalance = isNaN(freelancer.AccountBalance) ? deductedAmount : freelancer.AccountBalance + deductedAmount;
-    // }
-    //Notication from the Client Side
-    // client.Notifications.push({
-    //   message: `Your Amount of (${project.Title}) has been Deducted from your Freeze Account and has been added to the Freelancer (${res.locals.userFullName}) Account`,
-    //   createdAt: new Date(),
-    // });
-
-
-
-    //Notification of Amount in Freelancer
-    // freelancer.Notifications.push({
-    //   message: `Your Amount of (${project.Title}) has been added in your Account from Customer (${project.Username}).`,
-    //   createdAt: new Date(),
-    // });
 
     await freelancer.save();
 
@@ -224,24 +209,30 @@ let ProjectRejected = async (req, res) => {
   }
 };
 
+const Notifications = async (req, res) => {
+  try {
+    let id = res.locals.userId;
 
-let Notifications = async(req,res)=>{
-  try{
-  let id = res.locals.userId;
-  // Check if the user is a freelancer
-  const freelancer = await Freelance.findById(id);
-  if (freelancer) {
-    const notifications = freelancer.Notifications;
-    return res.status(200).json({ notifications });
+    // Check if the user is a freelancer
+    const freelancer = await Freelance.findById(id);
+
+    if (freelancer) {
+      // Sort notifications by date (createdAt) in descending order
+      const notifications = freelancer.Notifications.sort((a, b) => {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
+
+      return res.status(200).json({ notifications });
+    }
+
+    // If the user is neither a client nor a freelancer
+    return res.status(404).json({ message: 'User not found' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
   }
+};
 
-  // If the user is neither a client nor a freelancer
-  return res.status(404).json({ message: 'User not found' });
-} catch (err) {
-  console.error(err);
-  res.status(500).json({ error: err.message });
-}
-}
 let ProjectDeliverd = async (req, res) => {
   try {
     const projectId = req.params.id;
@@ -402,16 +393,21 @@ let SearchSeller = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
-let GetNewProposal = async (req, res) => {
+const GetNewProposal = async (req, res) => {
   try {
     // Fetch projects where the current user is assigned and the status is not APPROVED or DELIVERED
     const projects = await Projects.find({
       Assigned: res.locals.userId,
-      Status: { $nin: ['REJECTED', 'DELIVERED','APPROVED'] },
+      Status: { $nin: ['REJECTED', 'DELIVERED', 'APPROVED'] },
     });
 
-    if (projects.length > 0) {
-      res.status(200).json({ projects });
+    // Sort projects by date (createdAt) in descending order
+    const sortedProjects = projects.sort((a, b) => {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+
+    if (sortedProjects.length > 0) {
+      res.status(200).json({ projects: sortedProjects });
     } else {
       res.status(404).json({ message: 'No new proposals found for the current user.' });
     }
@@ -420,6 +416,7 @@ let GetNewProposal = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
 let getPaymentHistory = async (req, res) => {
   try {
     // Get the freelanceId from res.locals.userId
