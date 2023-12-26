@@ -2,7 +2,7 @@ const router = require("express").Router();
 const verifyToken = require("./authentication");
 
 const {getPaymentHistory,GetNewProposal,GetPresentProposals,AddsampleProject,GetReviews,Notifications,UpdateFreelancer, DeleteFreelancer, GetAllProjects, ProjectApproved, ProjectRejected, ProjectDeliverd, GetSellerProjects, SearchSeller, GetProfile} = require('../Controller/Freelencer_api');
-const {sendMessage} = require('../Controller/Chat');
+const {sendMessage,getMessages} = require('../Controller/Chat');
 
 router.put('/updateFreelancer',verifyToken,UpdateFreelancer);
 router.delete('/deleteFreelancer',verifyToken,DeleteFreelancer);
@@ -22,5 +22,6 @@ router.get('/getPaymentHistory',verifyToken,getPaymentHistory);
 
 
 router.post('/sendmessage/:receiverId',verifyToken, sendMessage);
+router.get('/getMessage/:receiverId',verifyToken, getMessages);
 
 module.exports=router;

@@ -74,7 +74,10 @@ const GetAllProjects = async (req, res) => {
 const GetPresentProposals = async (req, res) => {
   try {
     // Retrieve projects with status 'APPROVED'
-    const projects = await Projects.find({ Status: 'APPROVED' });
+    const projects = await Projects.find({
+      Assigned: res.locals.userId,
+      Status: 'APPROVED', // Corrected line
+    });
 
     // Sort projects by date (createdAt) in descending order
     const sortedProjects = projects.sort((a, b) => {
@@ -86,6 +89,7 @@ const GetPresentProposals = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
 
 
 let GetSellerProjects =async (req,res)=>{
@@ -416,7 +420,6 @@ const GetNewProposal = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
-
 let getPaymentHistory = async (req, res) => {
   try {
     // Get the freelanceId from res.locals.userId
@@ -431,14 +434,22 @@ let getPaymentHistory = async (req, res) => {
     }
 
     // Get the PaymentHistory array from the Freelance document
-    const paymentHistory = freelance.PaymentHistory;
+    let paymentHistory = freelance.PaymentHistory;
 
-    // Respond with the PaymentHistory array
+    // Sort the payment history by date and time in descending order
+    // Assuming each payment history item has a 'dateTime' field
+    paymentHistory.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
+
+    // Respond with the sorted PaymentHistory array
     res.status(200).json({ paymentHistory });
   } catch (err) {
     console.error('Error during fetching payment history:', err);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
+
+
+
 
 module.exports = {getPaymentHistory,GetNewProposal,GetPresentProposals,SearchSeller,GetSellerProjects,AddsampleProject,GetReviews ,ProjectDeliverd,Notifications,ProjectApproved,ProjectRejected, UpdateFreelancer,DeleteFreelancer, GetAllProjects,GetProfile};

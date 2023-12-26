@@ -35,18 +35,29 @@ let RegisterUser = async (req, res) => {
   let LoginUser = async (req, res) => {
     try {
       const user = await Freelance.findOne({ Email: req.body.Email });
-      !user && res.status(400).json("Wrong credentials!");
+  
+      if (!user) {
+        // If user is not found, return an appropriate response
+        return res.status(400).json("Wrong credentials!");
+      }
   
       const validated = await bcrypt.compare(req.body.Password, user.Password);
-      !validated && res.status(400).json("Wrong credentials!");
+  
+      if (!validated) {
+        // If password is incorrect, return an appropriate response
+        return res.status(400).json("Wrong credentials!");
+      }
   
       const token = generateToken(user);
   
       const { password, ...others } = user._doc;
       res.status(200).json({ ...others, token });
     } catch (err) {
-      res.status(500).json(err);
+      // Handle other errors, e.g., database connection issues
+      console.error(err);
+      res.status(500).json("Internal server error");
     }
   };
+  
 
 module.exports = {RegisterUser,LoginUser};
