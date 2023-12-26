@@ -381,6 +381,65 @@ let AddsampleProject = async (req,res) => {
     res.status(500).json({ error: 'Server error' });
   }
 }
+
+const UpdateSampleProject = async (req, res) => {
+  try {
+    const freelancerId = res.locals.userId;
+    const sampleProjectId = req.params.id; // Assuming you send the sample project's ID as a URL parameter
+    const updatedData = req.body; // Assuming you send the updated sample project data in the request body
+
+    // Find the Freelancer by ID
+    const freelancer = await Freelance.findById(freelancerId);
+
+    if (!freelancer) {
+      return res.status(404).json({ message: 'Freelancer not found' });
+    }
+
+    // Find the sample project by ID and update it
+    const sampleIndex = freelancer.Samples.findIndex(sample => sample.id === sampleProjectId);
+    if (sampleIndex === -1) {
+      return res.status(404).json({ message: 'Sample project not found' });
+    }
+
+    freelancer.Samples[sampleIndex] = { ...freelancer.Samples[sampleIndex], ...updatedData };
+
+    // Save the updated Freelancer document
+    await freelancer.save();
+
+    res.status(200).json({ message: 'Sample project updated successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+}
+
+
+const DeleteSampleProject = async (req, res) => {
+  try {
+    const freelancerId = res.locals.userId;
+    const sampleProjectId = req.params.id; // Assuming you send the sample project's ID as a URL parameter
+    console.log(sampleProjectId)
+    // Find the Freelancer by ID
+    const freelancer = await Freelance.findById(freelancerId);
+
+    if (!freelancer) {
+      return res.status(404).json({ message: 'Freelancer not found' });
+    }
+
+    // Remove the sample project from the Samples array
+    freelancer.Samples = freelancer.Samples.filter(sample => sample.id !== sampleProjectId);
+
+    // Save the updated Freelancer document
+    await freelancer.save();
+
+    res.status(200).json({ message: 'Sample project deleted successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+}
+
+
 let SearchSeller = async (req, res) => {
   try {
     const { query } = req.query;
@@ -452,4 +511,4 @@ let getPaymentHistory = async (req, res) => {
 
 
 
-module.exports = {getPaymentHistory,GetNewProposal,GetPresentProposals,SearchSeller,GetSellerProjects,AddsampleProject,GetReviews ,ProjectDeliverd,Notifications,ProjectApproved,ProjectRejected, UpdateFreelancer,DeleteFreelancer, GetAllProjects,GetProfile};
+module.exports = {UpdateSampleProject,DeleteSampleProject,getPaymentHistory,GetNewProposal,GetPresentProposals,SearchSeller,GetSellerProjects,AddsampleProject,GetReviews ,ProjectDeliverd,Notifications,ProjectApproved,ProjectRejected, UpdateFreelancer,DeleteFreelancer, GetAllProjects,GetProfile};
