@@ -23,7 +23,7 @@ mongoose
 app.use("/api/auth", authRoute);
 app.use("/api/Freelancer", Freelancer);
 
-app.listen("3000", () => {
+app.listen(process.env.PORT, () => {
   console.log("Backend is running.");
 });
 
