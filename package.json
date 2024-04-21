@@ -1,4 +1,15 @@
 {
+  "name": "assignment_2",
+  "version": "1.0.0",
+  "main": "App.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node",
+    "lint": "eslint ."
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
   "dependencies": {
     "bcrypt": "^5.1.1",
     "body-parse": "^0.1.0",
@@ -12,14 +23,7 @@
     "nodemon": "^3.0.1",
     "uid": "^2.0.2"
   },
-  "name": "assignment_2",
-  "version": "1.0.0",
-  "main": "App.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node"
-  },
-  "author": "",
-  "license": "ISC",
-  "description": ""
+  "devDependencies": {
+    "eslint": "^8.7.0"
+  }
 }
