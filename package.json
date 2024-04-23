@@ -17,6 +17,7 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint .",
+    "coverage": "jest --coverage",
     "start": "nodemon",
     "maintenance-script": "echo 'Running maintenance task...'" 
   },
