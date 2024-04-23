@@ -1,9 +1,11 @@
 name: Scheduled Tasks
 
 on:
+  push:
+    branches:
+      - main
   schedule:
     - cron: '0 0 * * *'
-
 jobs:
   perform-task:
     runs-on: ubuntu-latest
