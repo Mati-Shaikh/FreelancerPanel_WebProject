@@ -1,0 +1,23 @@
+name: Dependency Updates
+
+on:
+  schedule:
+    - cron: '0 0 * * *' 
+
+jobs:
+  dependabot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Dependabot
+        uses: dependabot/setup-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          service-type: github
+          directory: '/'
+
+      - name: Run Dependabot
+        run: npx dependabot
