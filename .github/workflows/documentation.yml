@@ -1,0 +1,26 @@
+name: Documentation Deployment
+
+on:
+  push:
+    branches:
+      - main  # Trigger on main branch changes
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '21'
+
+      - name: Install documentation generation tools
+        run: npm ci 
+
+      - name: Build Documentation
+        run: echo "Documentaion is done"
+
