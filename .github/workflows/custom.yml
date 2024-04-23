@@ -1,0 +1,48 @@
+name: Custom Workflow Integration
+
+on:
+  push:
+    branches:
+      - main 
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  custom_workflow:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '21' 
+
+      - name: Run Custom Task 1
+        run: echo "Running custom task 1"
+
+      - name: Run Custom Task 2
+        run: echo "Running custom task 2"
+
+      - name: Generate Release Notes
+        run: |
+          echo "Generating release notes..."
+          npm run generate-release-notes  
+
+      - name: Analyze Performance Metrics
+        run: |
+          echo "Analyzing performance metrics..."
+          npm run analyze-performance
+
+      - name: Sync Data Between Systems
+        run: |
+          echo "Syncing data between systems..."
+          npm run sync-data
+
+      - name: Run Custom Workflow Task
+        run: |
+          echo "Running a custom workflow task..."
+          npm run custom-task
+
