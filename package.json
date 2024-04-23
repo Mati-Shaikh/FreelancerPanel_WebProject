@@ -17,7 +17,8 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint .",
-    "start": "nodemon"
+    "start": "nodemon",
+    "maintenance-script": "echo 'Running maintenance task...'" 
   },
   "author": "",
   "license": "ISC",
