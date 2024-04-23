@@ -21,7 +21,7 @@ jobs:
           node-version: '21'
 
       - name: Install dependencies
-        run: npm ci  # Use npm ci for clean installs
+        run: npm ci 
 
       - name: Run ESLint
         run: npm run lint
@@ -34,3 +34,5 @@ jobs:
           npm audit --audit-level=moderate
           npm audit fix
 
+      - name: Verify Fixes
+        run: npm audit --audit-level=moderate
