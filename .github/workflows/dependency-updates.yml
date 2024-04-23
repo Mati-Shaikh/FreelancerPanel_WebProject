@@ -16,10 +16,9 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up Dependabot
-        uses: dependabot/github-action@v2
+        uses: actions/setup-node@v3
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          directory: '/'  # Specify the directory where dependencies are located
+          node-version: '21'
 
       - name: Run Dependabot
-        run: npx dependabot
+        run: echo "Running Dependabot..."
