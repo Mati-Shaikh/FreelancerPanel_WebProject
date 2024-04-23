@@ -19,7 +19,8 @@
     "lint": "eslint .",
     "coverage": "echo 'Coverge is going to happen'",
     "start": "nodemon",
-    "maintenance-script": "echo 'Running maintenance task...'" 
+    "maintenance-script": "echo 'Running maintenance task...'",
+    "generate-release-notes": "echo 'Generate release notes script placeholder'"
   },
   "author": "",
   "license": "ISC",
