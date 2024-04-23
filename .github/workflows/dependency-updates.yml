@@ -16,11 +16,10 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up Dependabot
-        uses: dependabot/setup-action@v2
+        uses: dependabot/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          service-type: github
-          directory: '/'
+          directory: '/'  # Specify the directory where dependencies are located
 
       - name: Run Dependabot
         run: npx dependabot
