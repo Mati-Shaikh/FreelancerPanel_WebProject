@@ -18,10 +18,10 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '21'
+          node-version: '14'
 
       - name: Install dependencies
-        run: npm ci 
+        run: npm ci
 
       - name: Run ESLint
         run: npm run lint
@@ -32,7 +32,7 @@ jobs:
       - name: Run Security Checks
         run: |
           npm audit --audit-level=moderate
-          npm audit fix
+          npm audit fix --force 
 
       - name: Verify Fixes
         run: npm audit --audit-level=moderate
