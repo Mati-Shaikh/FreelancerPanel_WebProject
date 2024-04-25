@@ -21,7 +21,7 @@ jobs:
      
       - name: Install mkdocs
         run: |
-          pip install mkdocs
+          npx install mkdocs
 
       - name: Install project dependencies
         run: |
