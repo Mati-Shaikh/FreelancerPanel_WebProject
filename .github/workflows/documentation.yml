@@ -11,16 +11,23 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2  # Checkout the repository's code
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '21'
+          node-version: '14'  # Specify the Node.js version
 
       - name: Install documentation generation tools
-        run: npm ci 
+        run: npm ci  # Install dependencies needed for documentation generation
 
       - name: Build Documentation
-        run: echo "Documentaion is done"
+        run: npm run build-docs  # Replace with the actual command to build documentation
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}  # GitHub token for authentication
+          publish_dir: ./docs  # Directory containing the built documentation
+          cname: your-custom-domain.com  # (Optional) Custom domain for GitHub Pages
 
