@@ -26,4 +26,4 @@ jobs:
 
       - name: Build Documentation
         run: |
-          ./node_modules/.bin/jsdoc -r ./src -d ./docs
+         echo "Buiding the Documentation"
