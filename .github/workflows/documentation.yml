@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '14'  # Specify the Node.js version
+          node-version: '21'  # Specify the Node.js version
 
       - name: Install documentation generation tools
         run: npm ci  # Install dependencies needed for documentation generation
