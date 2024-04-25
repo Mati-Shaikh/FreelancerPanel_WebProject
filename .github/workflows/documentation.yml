@@ -1,40 +1,29 @@
-name: Documentation Deployment
+name: Build Documentation
 
 on:
   push:
     branches:
-      - main  # Trigger on main branch changes
+      - main
 
 jobs:
-  deploy:
+  build-docs:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2  # Checkout the repository's code
+        uses: actions/checkout@v2
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v2
         with:
-          node-version: '21'  # Specify the Node.js version
+          node-version: '21'  # Replace with your desired Node.js version
 
-     
-      - name: Install mkdocs
-        run: |
-          npx install mkdocs
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Install project dependencies
-        run: |
-          npm ci
+      - name: Install jsdoc
+        run: npm install --save-dev jsdoc
 
       - name: Build Documentation
         run: |
-          npm run build-docs
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}  # GitHub token for authentication
-          publish_dir: ./docs  # Directory containing the built documentation
-          cname: your-custom-domain.com  # (Optional) Custom domain for GitHub Pages
-
+          ./node_modules/.bin/jsdoc -r ./src -d ./docs
