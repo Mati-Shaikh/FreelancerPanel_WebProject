@@ -18,11 +18,18 @@ jobs:
         with:
           node-version: '21'  # Specify the Node.js version
 
-      - name: Install documentation generation tools
-        run: npm ci  # Install dependencies needed for documentation generation
+     
+      - name: Install mkdocs
+        run: |
+          pip install mkdocs
+
+      - name: Install project dependencies
+        run: |
+          npm ci
 
       - name: Build Documentation
-        run: npm run build-docs  # Replace with the actual command to build documentation
+        run: |
+          npm run build-docs
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
