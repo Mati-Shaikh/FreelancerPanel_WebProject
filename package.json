@@ -24,7 +24,8 @@
     "analyze-performance": "echo 'Analyze performance script placeholder'",
     "sync-data": "echo 'Syncing data between systems placeholder'",
     "custom-task": "echo 'Running a custom workflow task placeholder'",
-    "build-docs": "your-build-command-here"
+    "build-docs": "npm run generate-docs"
+
   },
   "author": "",
   "license": "ISC",
