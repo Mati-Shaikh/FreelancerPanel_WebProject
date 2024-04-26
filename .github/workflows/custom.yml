@@ -1,48 +1,28 @@
-name: Custom Workflow Integration
+name: Releases
 
 on:
   push:
     branches:
-      - main 
-  pull_request:
-    types: [opened, synchronize]
+      - main
 
 jobs:
-  custom_workflow:
+  changelog:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v2
+      - name: conventional changelog action
+        id: changelog
+        uses: TriPSs/conventional-changelog-action@v3.7.1
         with:
-          node-version: '21' 
+          github-token: ${{secrets.CHANGELOG_RELEASE}}
 
-      - name: Run Custom Task 1
-        run: echo "Running custom task 1"
-
-      - name: Run Custom Task 2
-        run: echo "Running custom task 2"
-
-      - name: Generate Release Notes
-        run: |
-          echo "Generating release notes..."
-          npm run generate-release-notes  
-
-      - name: Analyze Performance Metrics
-        run: |
-          echo "Analyzing performance metrics..."
-          npm run analyze-performance
-
-      - name: Sync Data Between Systems
-        run: |
-          echo "Syncing data between systems..."
-          npm run sync-data
-
-      - name: Run Custom Workflow Task
-        run: |
-          echo "Running a custom workflow task..."
-          npm run custom-task
-
+      - name: create release
+        uses: actions/create-release@v1
+        if: ${{steps.changelog.outputs.skipped == 'false'}}
+        env:
+          GITHUB_TOKEN: ${{secrets.CHANGELOG_RELEASE}}
+        with:
+          tag_name: ${{steps.changelog.outputs.tag}}
+          release_name: ${{steps.changelog.outputs.tag}}
+          body: ${{steps.changelog.outputs.clean_changelog}}
