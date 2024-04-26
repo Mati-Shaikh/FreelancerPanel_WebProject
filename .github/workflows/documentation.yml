@@ -19,7 +19,10 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '21.x'
+          node-version: '21.x'  # Use the version of Node.js required by your project
+
+      - name: Install mkdocs
+        run: npm install -g mkdocs
 
       - name: Build documentation
         run: mkdocs build
