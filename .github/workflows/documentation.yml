@@ -1,4 +1,4 @@
-name: Deploy README to GitHub Pages
+name: Deploy to Github Pages
 
 on:
   push:
@@ -8,22 +8,21 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Create docs directory
-        run: mkdir docs
+      - name: Create deployment directory
+        run: mkdir -p ${{ github.workspace }}/docs/
 
-      - name: Copy README to docs
-        run: cp README.md docs/
+      - name: Copy README.md to deployment directory
+        run: cp README.md ${{ github.workspace }}/docs/
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs
-          user_name: GitHub Actions
-          user_email: actions@github.com
-          publish_branch: gh-pages
+      - name: Commit and push changes
+        run: |
+          cd ${{ github.workspace }}/docs/
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add README.md
+          git commit -m "Deploy README.md to GitHub Pages"
+          git push origin main
