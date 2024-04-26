@@ -26,4 +26,4 @@ jobs:
           publish_dir: ./docs
           user_name: GitHub Actions
           user_email: actions@github.com
-          publish_branch: gh-pages
+          publish_branch: main
