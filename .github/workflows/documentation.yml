@@ -21,11 +21,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build Documentation
-        run: |
-          # Generate documentation here, for example:
-          npm run build-docs
-
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
