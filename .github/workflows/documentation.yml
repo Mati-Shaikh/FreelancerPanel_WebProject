@@ -1,14 +1,14 @@
-name: Documentation Deployment
+name: Deploy README to GitHub Pages
 
 on:
   push:
     branches:
-      - main
+      - main  # Change this to your main branch name if it's different
 
 jobs:
-  deploy-docs:
+  deploy:
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -16,17 +16,20 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '21'  # Change to your desired Node.js version
+          node-version: '14'  # Change this to your desired Node.js version
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
+
+      - name: Build README
+        run: echo "No build step needed for README deployment"
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs  # Change this to your documentation directory
+          publish_dir: .  # Root directory is the publish directory
           user_name: GitHub Actions
           user_email: actions@github.com
           publish_branch: gh-pages
-
+          allow_empty_commit: true
