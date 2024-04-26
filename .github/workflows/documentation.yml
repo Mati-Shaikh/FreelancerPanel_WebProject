@@ -13,14 +13,14 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Create deployment directory
-        run: mkdir -p ${{ github.workspace }}/doc/
+        run: mkdir -p ${{ github.workspace }}/docs/
 
       - name: Copy README.md to deployment directory
-        run: cp README.md ${{ github.workspace }}/doc/
+        run: cp ${{ github.workspace }}/doc/README.md ${{ github.workspace }}/docs/
 
       - name: Commit and push changes
         run: |
-          cd ${{ github.workspace }}/doc/
+          cd ${{ github.workspace }}/docs/
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add README.md
