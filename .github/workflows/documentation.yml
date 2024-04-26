@@ -1,4 +1,4 @@
-name: Deploy Documentation
+name: Deploy Github Pages Documentation
 
 on:
   push:
@@ -6,6 +6,7 @@ on:
       - main  # Set this to your default documentation branch
     paths:
       - 'docs/**'  # Trigger the workflow only on changes in the 'docs' directory
+  workflow_dispatch:  # This allows manual triggering of the workflow
 
 jobs:
   build-and-deploy:
